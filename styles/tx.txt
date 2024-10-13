@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Cumpleaños</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+    <div id="countdown-container">
+        <h1 id="countdown">3</h1>
+    </div>
+
+    <div id="container" style="display: none;">
+        <div id="balloon">
+            <span>19</span>
+        </div>
+        <h1>Feliz cumpleaños</h1>
+        <h2>AMOR mío, te amo 3 millones</h2>
+        <canvas id="birthday"></canvas>
+    </div>
+    <script src="./js/main.js"></script>
+</body>
+</html>
+
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #000428, #004e92);
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#countdown-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #000428, #004e92);
+}
+
+#countdown {
+    font-size: 10em;
+    color: #FFFFFF;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: block;
+}
+
+h1, h2 {
+    color: #FFFFFF;
+    text-align: justify;
+    z-index: 2;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    user-select: none;
+}
+
+h1 {
+    top: 40%;
+    font-size: 4em;
+}
+
+h2 {
+    top: 70%;
+    font-size: 2.5em;
+}
+
+#balloon {
+    position: absolute;
+  
+   
+  
+    background-color: #FF007F;
+    width: 150px;
+    height: 200px;
+    border-radius: 99% 99% 99% 99%;
+    z-index: 3;
+    animation: floatUp 6s ease-in-out forwards;
+}
+
+#balloon span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 3em;
+    font-weight: bold;
+}
+
+@keyframes floatUp {
+    0% {
+        bottom: -100px;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        bottom: 80%;
+    }
+}
+
+
+// Cuenta regresiva
+let countdown = 3;
+const countdownElement = document.getElementById('countdown');
+const countdownContainer = document.getElementById('countdown-container');
+const mainContainer = document.getElementById('container');
+
+const countdownInterval = setInterval(() => {
+    countdown--;
+    countdownElement.textContent = countdown;
+
+    if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        countdownContainer.style.display = 'none'; // Oculta el contenedor de la cuenta regresiva
+        mainContainer.style.display = 'block'; // Muestra el contenido principal
+        startFireworks(); // Inicia los fuegos artificiales
+    }
+}, 1000);
+
+// Inicia los fuegos artificiales después de la cuenta regresiva
+function startFireworks() {
+    const PI2 = Math.PI * 2;
+    const random = (min, max) => Math.random() * (max - min + 1) + min | 0;
+    const timestamp = _ => new Date().getTime();
+
+    class Birthday {
+        constructor() {
+            this.resize();
+            this.fireworks = [];
+            this.counter = 0;
+        }
+
+        resize() {
+            this.width = canvas.width = window.innerWidth;
+            this.height = canvas.height = window.innerHeight;
+            this.spawnA = this.width / 4;
+            this.spawnB = this.width * 3 / 4;
+            this.spawnC = this.height * 0.1;
+            this.spawnD = this.height * 0.5;
+        }
+
+        onClick(evt) {
+            let x = evt.clientX || evt.touches && evt.touches[0].pageX;
+            let y = evt.clientY || evt.touches && evt.touches[0].pageY;
+
+            let count = random(3, 5);
+            for (let i = 0; i < count; i++) this.fireworks.push(new Firework(
+                random(this.spawnA, this.spawnB),
+                this.height,
+                x,
+                y,
+                random(0, 260),
+                random(30, 110)
+            ));
+
+            this.counter = -1;
+        }
+
+        update(delta) {
+            ctx.globalCompositeOperation = 'hard-light';
+            ctx.fillStyle = `rgba(0,0,0,${7 * delta})`;
+            ctx.fillRect(0, 0, this.width, this.height);
+
+            ctx.globalCompositeOperation = 'lighter';
+            for (let firework of this.fireworks) firework.update(delta);
+
+            this.counter += delta * 3;
+            if (this.counter >= 1) {
+                this.fireworks.push(new Firework(
+                    random(this.spawnA, this.spawnB),
+                    this.height,
+                    random(0, this.width),
+                    random(this.spawnC, this.spawnD),
+                    random(0, 360),
+                    random(30, 110)
+                ));
+                this.counter = 0;
+            }
+
+            if (this.fireworks.length > 1000) this.fireworks = this.fireworks.filter(firework => !firework.dead);
+        }
+    }
+
+    class Firework {
+        constructor(x, y, targetX, targetY, shade, offsprings) {
+            this.dead = false;
+            this.offsprings = offsprings;
+            this.x = x;
+            this.y = y;
+            this.targetX = targetX;
+            this.targetY = targetY;
+            this.shade = shade;
+            this.history = [];
+        }
+
+        update(delta) {
+            if (this.dead) return;
+
+            let xDiff = this.targetX - this.x;
+            let yDiff = this.targetY - this.y;
+            if (Math.abs(xDiff) > 3 || Math.abs(yDiff) > 3) {
+                this.x += xDiff * 2 * delta;
+                this.y += yDiff * 2 * delta;
+
+                this.history.push({ x: this.x, y: this.y });
+                if (this.history.length > 20) this.history.shift();
+            } else {
+                if (this.offsprings && !this.madeChilds) {
+                    let babies = this.offsprings / 2;
+                    for (let i = 0; i < babies; i++) {
+                        let targetX = this.x + this.offsprings * Math.cos(PI2 * i / babies) | 0;
+                        let targetY = this.y + this.offsprings * Math.sin(PI2 * i / babies) | 0;
+                        birthday.fireworks.push(new Firework(this.x, this.y, targetX, targetY, this.shade, 0));
+                    }
+                }
+                this.madeChilds = true;
+                this.history.shift();
+            }
+
+            if (this.history.length === 0) this.dead = true;
+            else if (this.offsprings) {
+                for (let i = 0; this.history.length > i; i++) {
+                    let point = this.history[i];
+                    ctx.beginPath();
+                    ctx.fillStyle = 'hsl(' + this.shade + ',100%,' + i + '%)';
+                    ctx.arc(point.x, point.y, 1, 0, PI2, false);
+                    ctx.fill();
+                }
+            } else {
+                ctx.beginPath();
+                ctx.fillStyle = 'hsl(' + this.shade + ',100%,50%)';
+                ctx.arc(this.x, this.y, 1, 0, PI2, false);
+                ctx.fill();
+            }
+        }
+    }
+
+    let canvas = document.getElementById('birthday');
+    let ctx = canvas.getContext('2d');
+    let then = timestamp();
+
+    let birthday = new Birthday();
+    window.onresize = () => birthday.resize();
+    document.onclick = evt => birthday.onClick(evt);
+    document.ontouchstart = evt => birthday.onClick(evt);
+
+    (function loop() {
+        requestAnimationFrame(loop);
+    
+        let now = timestamp();
+        let delta = (now - then) / 1000;
+        then = now;
+    
+        birthday.update(delta);
+    })();
+    }
+    

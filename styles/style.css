@@ -1,0 +1,145 @@
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #000428, #004e92);
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#countdown-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #000428, #004e92);
+}
+
+#countdown {
+    font-size: 10em;
+    color: #FFFFFF;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: block;
+}
+
+h1, h2 {
+    color: #FFFFFF;
+    text-align: justify; /* Cambiar a center */
+    z-index: 2;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    user-select: none;
+}
+
+h1 {
+    top: 40%;
+    font-size: 4em;
+}
+
+h2 {
+    top: 60%; /* Ajustar la posición */
+    font-size: 2.5em;
+}
+
+#cake-container {
+    position: absolute;
+    bottom: 20%;
+  
+    transform: translateX(-50%);
+    width: 150px;
+    z-index: 2;
+}
+
+#cake {
+    position: relative;
+}
+
+.layer {
+    height: 30px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+.layer1 {
+    background-color: #FFCC00; /* Color de la capa 1 */
+}
+
+.layer2 {
+    background-color: #FF6699; /* Color de la capa 2 */
+}
+
+.layer3 {
+    background-color: #FF3366; /* Color de la capa 3 */
+}
+
+.candles {
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    margin-top: -130px; /* Ajusta la posición de las velas */
+}
+
+.candle {
+    width: 5px;
+    height: 34px;
+    background-color: #FF4500; /* Color de las velas */
+    position: relative;
+}
+
+
+
+#balloon {
+    position: absolute;
+    background-color: #FF007F;
+    width: 150px;
+    height: 200px;
+    border-radius: 99% 99% 99% 99%;
+    z-index: 3;
+    animation: floatUp 6s ease-in-out forwards;
+}
+
+#balloon span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 3em;
+    font-weight: bold;
+}
+
+#string {
+    position: absolute;
+    top: 100%;
+    bottom: 0;
+    left: 50%; /* Cambiar a 50% para centrar el hilo */
+    transform: translateX(-50%);
+    width: 2px; /* Ancho del hilo */
+    height: 120px; /* Altura del hilo */
+    background-color: #FFCC00; /* Color del hilo */
+}
+
+
+
+@keyframes floatUp {
+    0% {
+        bottom: -100px;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        bottom: 80%;
+    }
+}
